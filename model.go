@@ -6,9 +6,9 @@ type ProcessorCore struct {
 	// this does *not* necessarily equate to a zero-based index of the core
 	// within a physical package. For example, the core IDs for an Intel Core
 	// i7 are 0, 1, 2, 8, 9, and 10
-	ID int `json:"id"`
+	ID int `json:"id"` // (ebx >> 26) & 0x3F
 	// NumThreads is the number of hardware threads associated with the core
-	NumThreads uint32 `json:"total_threads"`
+	NumThreads uint32 `json:"total_threads"` //machdep.cpu.thread_count
 	// LogicalProcessors is a slice of ints representing the logical processor
 	// IDs assigned to any processing unit for the core. These are sometimes
 	// called the "thread siblings". Logical processor IDs are the *zero-based*

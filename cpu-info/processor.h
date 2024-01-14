@@ -6,7 +6,7 @@
 typedef struct  {
     int ID; 
     u_int32_t NumCores; // machdep.cpu.core_count
-    u_int32_t NumThreads; // machdep.cpu.thread_count
+    u_int32_t NumThreads; // machdep.cpu.cores_per_package
     int Model; // machdep.cpu.model
     char* Vendor; // machdep.cpu.vendor
     char* Capabilites; // machdep.cpu.features
@@ -16,7 +16,7 @@ typedef struct  {
 #define INFO_LEN 5
 
 #define NUMCORES "machdep.cpu.core_count"
-#define NUMTHREADS "machdep.cpu.thread_count"
+#define NUMTHREADS "machdep.cpu.cores_per_package"
 #define VENDOR "machdep.cpu.vendor"
 #define MODEL "machdep.cpu.model"
 #define CAPS "machdep.cpu.features"
