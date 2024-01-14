@@ -1,10 +1,8 @@
-target = get-info
 source_files = aux.c get-info.c
+lib_target = libprocessor.so
 
 all:
-	gcc -o $(target) $(source_files) 
+	gcc -shared -o $(lib_target) $(source_files)
+	cp $(lib_target) ../.
 clean:
-	rm $(target)
-compile:
-	gcc -g $(source_files)
-	
+	rm $(lib_target) 

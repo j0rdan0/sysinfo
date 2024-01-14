@@ -1,43 +1,44 @@
 package main
 
+// #cgo LDFLAGS: -L. -lprocessor
 // #include <stdlib.h>
 // #include "cpu-info/processor.h"
 import "C"
 import (
 	"fmt"
 	"runtime"
+	"strings"
 )
 
 func main() {
 
-	if isDarwin() {
-		fmt.Println("running Darwin")
-	} else {
-		fmt.Println("not running Darwin")
-	}
-	if isX86() {
-		fmt.Println("running x86 arch")
-		return
-	}
-	fmt.Println("not running x86 arch")
-
-	Processor := C._get_proc_info()
-	fmt.Printf("ID: %d\n", C.int(Processor.ID))
+	checkOS()
+	var proc Processor
+	proc.get_info()
 
 }
 
-func isDarwin() bool {
+func checkOS() {
 	if runtime.GOOS == "darwin" {
-		return true
+		fmt.Printf("running Darwin, ")
+	} else {
+		fmt.Printf("not running Darwin, ")
 	}
-	return false
+	if runtime.GOARCH == "amd64" || runtime.GOARCH == "Amd64p32" {
+		fmt.Println("running x86 arch")
 
+	} else {
+		fmt.Println("not running x86 arch")
+	}
 }
 
-func isX86() bool {
-	if runtime.GOARCH == "amd64" || runtime.GOARCH == "Amd64p32" {
-		return true
-	}
-	return false
+func (proc *Processor) get_info() {
+	p := C.get_proc_info()
+	proc.ID = int(C.int(p.ID))
+	proc.Model = int(C.int(p.Model))
+	proc.NumCores = uint32(C.uint(p.NumCores))
+	proc.NumThreads = uint32(C.uint(p.NumThreads))
+	proc.Vendor = C.GoString(p.Vendor)
+	proc.Capabilities = []string(strings.Split(C.GoString(p.Capabilites), " "))
 
 }

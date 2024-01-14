@@ -1,7 +1,7 @@
 #include <sys/types.h>
 
-#ifndef _PROCESSOR_H
-#define _PROCESSOR_H
+#ifndef PROCESSOR_H
+#define PROCESSOR_H
 
 typedef struct  {
     int ID; 
@@ -24,11 +24,12 @@ typedef struct  {
 
 void cpuid(unsigned int*,unsigned int*,unsigned int*,unsigned int*);
 int get_cpu();
-Processor _get_proc_info();
+Processor get_proc_info();
 int report_err(const char* info);
+void test();
 
 
-const char* cpu_info[] = {NUMCORES,NUMTHREADS,VENDOR,MODEL,CAPS};
+extern const char* cpu_info[];
 
 enum cpu_info_fields {_NUMCORES,_NUMTHREADS,_VENDOR,_MODEL,_CAPS};
 

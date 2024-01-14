@@ -4,18 +4,8 @@
 #include <stdlib.h>
 #include "processor.h"
 
-int main() {
-	
-	Processor p = _get_proc_info();
-	
-	printf("ID: %d cores: %d threads: %d vendor: %s model: %d caps: %s\n",p.ID,p.NumCores,p.NumThreads,p.Vendor,p.Model,p.Capabilites);
-
-	return 0;
-}
-
 // main function to be exported to Go
-
-Processor _get_proc_info() {
+Processor get_proc_info() {
 	size_t data_size;
 	int ret;
 	Processor p;
