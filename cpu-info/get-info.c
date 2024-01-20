@@ -51,8 +51,21 @@ Processor get_proc_info() {
 
 		}
 	}
-	p.ID = get_cpu();
+	p.ID = get_proc_id();
 		
 	return p;
+}
+
+ProcessorCore get_core_info() {
+	size_t data_size;
+	int ret;
+	ProcessorCore p;
+
+	p.ID = get_core_id();
+	ret = sysctlbyname(CORE_NUM_THREADS,&p.NumThreads,&data_size,NULL,0);
+	if (ret != 0) report_err("Core NumThreads");
+	
+	return p;
+
 }
 
