@@ -1,4 +1,4 @@
-source_files = aux.c get-info.c
+source_files = cpu-info/aux.c cpu-info/get-info.c
 lib_target = libprocessor.so
 libs = -lhwloc
 

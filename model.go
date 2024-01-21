@@ -13,9 +13,8 @@ type ProcessorCore struct {
 	// IDs assigned to any processing unit for the core. These are sometimes
 	// called the "thread siblings". Logical processor IDs are the *zero-based*
 	// index of the processor on the host and are *not* related to the core ID.
-	LogicalProcessors []int `json:"logical_processors"` // for me should be int[NumThreads] ? machdep.cpu.thread_count
+	LogicalProcessors []int `json:"logical_processors"` //  // Processing Unit, or (Logical) Processor
 }
-
 type Processor struct {
 	// ID is the physical processor `uint32` ID according to the system
 	ID int `json:"id"` // hw.packages ??
