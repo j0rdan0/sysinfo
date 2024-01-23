@@ -56,14 +56,31 @@ Processor get_proc_info() {
 	return p;
 }
 
-ProcessorCore get_core_info() {
-	size_t data_size;
-	int ret;
+ProcessorCore get_core_info(Processor proc,int id,hwloc_topology_t topo) {
 	ProcessorCore p;
+	
+	p.NumThreads = proc.NumThreads/proc.NumCores;
+	hwloc_obj_t pu;
 
-	p.ID = get_core_id();
-	ret = sysctlbyname(CORE_NUM_THREADS,&p.NumThreads,&data_size,NULL,0);
-	if (ret != 0) report_err("Core NumThreads");
+/*
+	Topology looks like this:
+	Core -> 2 L1d -> 1 PU/L1
+*/
+
+	hwloc_obj_t core = hwloc_get_obj_by_type(topo,HWLOC_OBJ_CORE,id);
+	p.ID = id;
+			
+		for (int j = 0; j < core->arity;j++) { // 2 PUs
+			//l1 = 
+			pu = core->children[j]->children[0];
+			p.LogicalProcessors[j] = (int)pu->os_index;
+			
+		}
+	
+	
+	
+	
+	
 	
 	return p;
 

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "processor.h"
 #include <hwloc.h>
-#include <strings.h>
+#include <string.h>
 
 const char* cpu_info[] = {NUMCORES,NUMTHREADS,VENDOR,MODEL,CAPS};
 
@@ -50,6 +50,7 @@ void test_hwloc() {
 	hwloc_topology_t topo;
 	hwloc_cpuset_t set;
 	hwloc_obj_t obj;
+	char type[32];
 	
 	int ret = hwloc_topology_init(&topo);
 	if ( ret == -1) {
@@ -65,34 +66,26 @@ void test_hwloc() {
 		
 	} 
 	printf("loaded topology\n");
+			
+	Processor proc = get_proc_info();
+	ProcessorCore p ;
+	ProcessorCore logical[proc.NumCores];
 	
-	
-	iterate_topo(topo,hwloc_get_root_obj(topo),0);
+
+	// create array of Cores
+	for ( int i = 0 ; i < proc.NumCores ;i++) {
+		logical[i] =  get_core_info(proc,i,topo);
+	}
 	
 
 	hwloc_topology_destroy(topo);
 }
 
-void iterate_topo(hwloc_topology_t topology, hwloc_obj_t obj,
-                           int depth) {
 
-char type[32];
-unsigned i;
 
- hwloc_obj_type_snprintf(type, sizeof(type), obj, 0);
- if( strcmp(type,"Core") == 0 || strcmp(type,"PU") == 0)
-	{
-		printf("type: %s",type);
- 		if (obj->os_index != (unsigned) -1)
-			printf("#%u\n",obj->os_index);
-		else {
-			printf("\n");
-		}
-	}					   
- 	
+	
 
-for(i =0; i< obj->arity;i++) {
-	iterate_topo(topology,obj->children[i],depth+1);
-}
-}
+
+	
+
 

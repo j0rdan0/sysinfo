@@ -14,13 +14,14 @@ func main() {
 
 	C.test_hwloc()
 	checkOS()
-	var proc Processor
-	var core ProcessorCore
-	proc.get_proc_info()
-	core.get_core_info()
-	fmt.Println(proc.String())
-	fmt.Println(core.String())
-
+	/*
+		var proc Processor
+		var core ProcessorCore
+		proc.get_proc_info()
+		core.get_core_info()
+		fmt.Println(proc.String())
+		fmt.Println(core.String())
+	*/
 }
 
 func checkOS() {
