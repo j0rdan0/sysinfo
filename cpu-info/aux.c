@@ -4,6 +4,8 @@
 #include <hwloc.h>
 #include <string.h>
 
+
+
 const char* cpu_info[] = {NUMCORES,NUMTHREADS,VENDOR,MODEL,CAPS};
 
 void cpuid(unsigned int *eax, unsigned int *ebx, unsigned int *ecx, unsigned int *edx) {
@@ -41,16 +43,7 @@ void report_err(const char* info) {
 }
 
 
-void test() {
-	Processor p = get_proc_info();
-	printf("ID: %d cores: %d threads: %d vendor: %s model: %d caps: %s\n",p.ID,p.NumCores,p.NumThreads,p.Vendor,p.Model,p.Capabilites);
-}
-
 void test_hwloc() {
-	hwloc_topology_t topo;
-	hwloc_cpuset_t set;
-	hwloc_obj_t obj;
-	char type[32];
 	
 	int ret = hwloc_topology_init(&topo);
 	if ( ret == -1) {
@@ -66,18 +59,17 @@ void test_hwloc() {
 		
 	} 
 	printf("loaded topology\n");
-			
-	Processor proc = get_proc_info();
-	ProcessorCore p ;
-	ProcessorCore logical[proc.NumCores];
-	
 
-	// create array of Cores
-	for ( int i = 0 ; i < proc.NumCores ;i++) {
-		logical[i] =  get_core_info(proc,i,topo);
+	Processor p = get_proc_info();
+	
+	
+	for ( int i = 0; i < p.NumCores;i++) {
+		printf("Core#%d\n",p.Cores[i].ID);
+		for ( int j = 0; j < p.Cores[i].NumThreads;j++) {
+			printf("PU#%d\n",p.Cores[i].LogicalProcessors[j]);
+		}
 	}
 	
-
 	hwloc_topology_destroy(topo);
 }
 

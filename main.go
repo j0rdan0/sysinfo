@@ -54,12 +54,13 @@ func (proc *Processor) String() string {
 	return fmt.Sprintf("Processor ID: %d Model: %d Physical cores: %d Hardware threads: %d Vendor: %s Features: %s", proc.ID, proc.Model, proc.NumCores, proc.NumThreads, proc.Vendor, features)
 }
 
-func (core *ProcessorCore) get_core_info() {
-	c := C.get_core_info()
-	core.ID = int(C.int(c.ID))
-	core.NumThreads = uint32(C.uint(c.NumThreads))
-}
-
+/*
+	func (core *ProcessorCore) get_core_info() {
+		c := C.get_core_info()
+		core.ID = int(C.int(c.ID))
+		core.NumThreads = uint32(C.uint(c.NumThreads))
+	}
+*/
 func (core *ProcessorCore) String() string {
 	return fmt.Sprintf("Core ID: %d Core Num threads: %d\n", core.ID, core.NumThreads)
 }

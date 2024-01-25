@@ -10,7 +10,7 @@ Processor get_proc_info() {
 	int ret;
 	Processor p;
 
-	for ( enum cpu_info_fields i=_NUMCORES; i <= _CAPS;i++) {
+	for ( enum cpu_info_fields i = _NUMCORES; i <= _CAPS;i++) {
 		switch(i) {
 			case  _NUMCORES:
 				ret = sysctlbyname(NUMCORES,&p.NumCores,&data_size,NULL,0);
@@ -52,14 +52,24 @@ Processor get_proc_info() {
 		}
 	}
 	p.ID = get_proc_id();
+	
+	
+	//ProcessorCore core[p.NumCores];
+	 
+	   
+	for ( int i = 0 ; i < p.NumCores ;i++) {
+		p.Cores[i] = get_core_info(p,i,topo);
+	
+	}
 		
 	return p;
 }
 
 ProcessorCore get_core_info(Processor proc,int id,hwloc_topology_t topo) {
-	ProcessorCore p;
+	ProcessorCore core;
 	
-	p.NumThreads = proc.NumThreads/proc.NumCores;
+	core.NumThreads = proc.NumThreads/proc.NumCores;
+	core.ID = id;
 	hwloc_obj_t pu;
 
 /*
@@ -67,22 +77,14 @@ ProcessorCore get_core_info(Processor proc,int id,hwloc_topology_t topo) {
 	Core -> 2 L1d -> 1 PU/L1
 */
 
-	hwloc_obj_t core = hwloc_get_obj_by_type(topo,HWLOC_OBJ_CORE,id);
-	p.ID = id;
-			
-		for (int j = 0; j < core->arity;j++) { // 2 PUs
-			//l1 = 
-			pu = core->children[j]->children[0];
-			p.LogicalProcessors[j] = (int)pu->os_index;
+	hwloc_obj_t core_obj = hwloc_get_obj_by_type(topo,HWLOC_OBJ_CORE,id);
+	
+		for (int j = 0; j < core_obj->arity;j++) { // 2 PUs
+			pu = core_obj->children[j]->children[0];
+			core.LogicalProcessors[j] = (int)pu->os_index;
 			
 		}
-	
-	
-	
-	
-	
-	
-	return p;
+	return core;
 
 }
 

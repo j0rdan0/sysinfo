@@ -4,22 +4,28 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
+hwloc_topology_t topo;
+
+typedef struct {
+    int ID; // hwloc HWLOC_OBJ_CORE os_index
+    u_int32_t NumThreads; // NUMTHREADS/NUMCORES ( correct)
+    int LogicalProcessors[2]; // Processing Unit(PU), or (Logical) Processor in hwloc this is cpuset; 
+    // hwloc HWLOC_OBJ_PU  os_index obj field;  those are the actual threads
+} ProcessorCore;
+
+
 typedef struct  {
-    int ID;  // (ebx >> 24) & 0xFF
+    int ID;  // (ebx >> 24) & 0xFF // incorrect
     u_int32_t NumCores; // machdep.cpu.core_count ( correct)
     u_int32_t NumThreads; // machdep.cpu.logical_per_package ( correct)
     int Model; // machdep.cpu.model ( correct)
     char* Vendor; // machdep.cpu.vendor ( correct)
     char* Capabilites; // machdep.cpu.features ( correct)
+    ProcessorCore Cores[8];
     
 } Processor;
 
-typedef struct {
-    int ID; // hwloc HWLOC_OBJ_CORE os_inde
-    u_int32_t NumThreads; // NUMTHREADS/NUMCORES ( correct)
-    int LogicalProcessors[]; // Processing Unit(PU), or (Logical) Processor in hwloc this is cpuset; 
-    // hwloc HWLOC_OBJ_PU  os_index obj field;  those are the actual threads
-} ProcessorCore;
+
 
 #define INFO_LEN 5
 
