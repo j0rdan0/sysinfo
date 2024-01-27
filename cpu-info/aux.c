@@ -4,8 +4,6 @@
 #include <hwloc.h>
 #include <string.h>
 
-
-
 const char* cpu_info[] = {NUMCORES,NUMTHREADS,VENDOR,MODEL,CAPS};
 
 void cpuid(unsigned int *eax, unsigned int *ebx, unsigned int *ecx, unsigned int *edx) {
@@ -24,15 +22,6 @@ int get_proc_id() {
 	int proc_id = (ebx >> 24) & 0xFF; //  see https://www.felixcloutier.com/x86/cpuid
 	return proc_id;
 }
-int get_core_id() {
-	unsigned int eax,ebx,ecx,edx;
-	eax = 1;
-	ebx = ecx = edx = 0;
-	cpuid(&eax,&ebx,&ecx,&edx);
-	int core_id = (ebx >> 26) & 0x3F;
-	return core_id;
-
-}
 
 // error handling requires more work
 void report_err(const char* info) {
@@ -43,35 +32,62 @@ void report_err(const char* info) {
 }
 
 
+
 void test_hwloc() {
 	
-	int ret = hwloc_topology_init(&topo);
+	int ret = hwloc_topology_init(&topology);
 	if ( ret == -1) {
 		perror("err: ");
 		exit(EXIT_FAILURE);
 	}
-	printf("topo initiated at: %p\n",&topo);
-	ret = hwloc_topology_load(topo);
+	printf("topo initiated at: %p\n",&topology);
+	ret = hwloc_topology_load(topology);
 	if ( ret == -1) {
 		perror("err: ");
-		hwloc_topology_destroy(topo);
+		hwloc_topology_destroy(topology);
 		exit(EXIT_FAILURE);
 		
 	} 
 	printf("loaded topology\n");
 
-	Processor p = get_proc_info();
+Processor p = get_proc_info();
 	
-	
-	for ( int i = 0; i < p.NumCores;i++) {
+	for ( int i = 0;i < p.NumCores;i++) {
 		printf("Core#%d\n",p.Cores[i].ID);
-		for ( int j = 0; j < p.Cores[i].NumThreads;j++) {
-			printf("PU#%d\n",p.Cores[i].LogicalProcessors[j]);
+		for(int j = 0; j < p.Cores[i].NumThreads;j++){
+			printf("PU#%d\n",*(p.Cores[i].LogicalProcessors+sizeof(int)*j));
 		}
 	}
-	
-	hwloc_topology_destroy(topo);
+
+
+/*
+ProcessorCore core = get_core_info(&p,7);
+printf("core: %d\n",core.ID);
+
+for (int i = 0; i< core.NumThreads;i++) {
+	printf("pu: %d\n",*(core.LogicalProcessors+sizeof(int)*i));
 }
+	*/
+	
+}
+
+
+void init_topology() {
+	int ret = hwloc_topology_init(&topology);
+	if ( ret == -1) {
+		perror("err: ");
+		exit(EXIT_FAILURE);
+	}
+	ret = hwloc_topology_load(topology);
+	if ( ret == -1) {
+		perror("err: ");
+		hwloc_topology_destroy(topology);
+		exit(EXIT_FAILURE);
+		
+	} 
+	
+}
+
 
 
 

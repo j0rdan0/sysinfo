@@ -4,28 +4,28 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
-hwloc_topology_t topo;
+hwloc_topology_t topology; // global hwloc topology
 
+
+// struct representing a Processor Core
 typedef struct {
-    int ID; // hwloc HWLOC_OBJ_CORE os_index
-    u_int32_t NumThreads; // NUMTHREADS/NUMCORES ( correct)
-    int LogicalProcessors[2]; // Processing Unit(PU), or (Logical) Processor in hwloc this is cpuset; 
-    // hwloc HWLOC_OBJ_PU  os_index obj field;  those are the actual threads
+    int ID; // hwloc HWLOC_OBJ_CORE os_index field
+    u_int32_t NumThreads; // NUMTHREADS/NUMCORES
+    int* LogicalProcessors; // Processing Unit(PU), or (Logical) Processor
+    // hwloc HWLOC_OBJ_PU os_index ield; those are the actual threads
 } ProcessorCore;
 
 
+// struct representing a Processor Package
 typedef struct  {
     int ID;  // (ebx >> 24) & 0xFF // incorrect
-    u_int32_t NumCores; // machdep.cpu.core_count ( correct)
-    u_int32_t NumThreads; // machdep.cpu.logical_per_package ( correct)
-    int Model; // machdep.cpu.model ( correct)
-    char* Vendor; // machdep.cpu.vendor ( correct)
-    char* Capabilites; // machdep.cpu.features ( correct)
+    u_int32_t NumCores; // machdep.cpu.core_count 
+    u_int32_t NumThreads; // machdep.cpu.logical_per_package
+    int Model; // machdep.cpu.model
+    char* Vendor; // machdep.cpu.vendor
+    char* Capabilites; // machdep.cpu.features
     ProcessorCore Cores[8];
-    
 } Processor;
-
-
 
 #define INFO_LEN 5
 
@@ -33,20 +33,16 @@ typedef struct  {
 #define NUMTHREADS "machdep.cpu.logical_per_package"
 #define MODEL "machdep.cpu.model"
 #define CAPS "machdep.cpu.features"
-#define CORE_NUM_THREADS "machdep.cpu.features" // NUMTHREADS/NUMCORES // this needs refactor
 #define VENDOR "machdep.cpu.vendor"
-
 
 void cpuid(unsigned int*,unsigned int*,unsigned int*,unsigned int*);
 int get_proc_id();
 Processor get_proc_info();
 void report_err(const char* info);
-void test();
-int get_core_id();
-ProcessorCore get_core_info(Processor proc,int id,hwloc_topology_t topo);
+ProcessorCore get_core_info(Processor* proc,int id);
 void test_hwloc();
-
-
+void init_topology();
+static inline void destroy_topology() {hwloc_topology_destroy(topology);}
 
 extern const char* cpu_info[];
 

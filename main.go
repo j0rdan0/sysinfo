@@ -7,21 +7,13 @@ import "C"
 import (
 	"fmt"
 	"runtime"
-	"strings"
 )
 
 func main() {
 
 	C.test_hwloc()
 	checkOS()
-	/*
-		var proc Processor
-		var core ProcessorCore
-		proc.get_proc_info()
-		core.get_core_info()
-		fmt.Println(proc.String())
-		fmt.Println(core.String())
-	*/
+
 }
 
 func checkOS() {
@@ -36,22 +28,21 @@ func checkOS() {
 	} else {
 		fmt.Println("not running x86 arch")
 	}
+
 }
 
 func (proc *Processor) get_proc_info() {
-	p := C.get_proc_info()
-	proc.ID = int(C.int(p.ID))
-	proc.Model = int(C.int(p.Model))
-	proc.NumCores = uint32(C.uint(p.NumCores))
-	proc.NumThreads = uint32(C.uint(p.NumThreads))
-	proc.Vendor = C.GoString(p.Vendor)
-	proc.Capabilities = []string(strings.Split(C.GoString(p.Capabilites), " "))
+
+}
+
+func (core *ProcessorCore) get_core_info(proc Processor, i int) {
+
 }
 
 func (proc *Processor) String() string {
 
-	features := strings.Join(proc.Capabilities, " ")
-	return fmt.Sprintf("Processor ID: %d Model: %d Physical cores: %d Hardware threads: %d Vendor: %s Features: %s", proc.ID, proc.Model, proc.NumCores, proc.NumThreads, proc.Vendor, features)
+	//features := strings.Join(proc.Capabilites, " ")
+	return fmt.Sprintf("Processor ID: %d Model: %d Physical cores: %d Hardware threads: %d Vendor: %s Features: %s", proc.ID, proc.Model, proc.NumCores, proc.NumThreads, proc.Vendor, proc.Capabilites)
 }
 
 /*
