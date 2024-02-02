@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"unsafe"
+
+	"github.com/fatih/color"
 )
 
 func main() {
@@ -18,7 +20,7 @@ func main() {
 	proc.Cores = make([]*ProcessorCore, 0)
 	proc.get_proc_info()
 
-	fmt.Println(proc.String())
+	fmt.Println(proc)
 
 }
 
@@ -95,11 +97,11 @@ func (proc *Processor) String() string {
 
 func (core *ProcessorCore) String() string {
 	var pus string = ""
-
 	for _, pu := range core.LogicalProcessors {
 		pus += strconv.Itoa(pu)
 		pus += " "
 
 	}
-	return fmt.Sprintf("Core#%d\nPUs: [%s]\n", core.ID, pus)
+	red := color.New(color.FgRed).SprintFunc()
+	return fmt.Sprintf("Core#%d\nPUs: [ %s ]\n", core.ID, red(pus))
 }
