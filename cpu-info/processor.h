@@ -6,7 +6,6 @@
 
 hwloc_topology_t topology; // global hwloc topology
 
-
 // struct representing a Processor Core
 typedef struct {
     int ID; // hwloc HWLOC_OBJ_CORE os_index field
@@ -39,7 +38,7 @@ void cpuid(unsigned int*,unsigned int*,unsigned int*,unsigned int*);
 int get_proc_id();
 Processor get_proc_info();
 void report_err(const char* info);
-ProcessorCore get_core_info(Processor* proc,int id);
+void get_core_info(ProcessorCore* core,int id,int threads);
 void test_hwloc();
 void init_topology();
 static inline void destroy_topology() {hwloc_topology_destroy(topology);}

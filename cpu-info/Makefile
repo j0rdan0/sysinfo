@@ -3,7 +3,7 @@ lib_target = libprocessor.so
 libs = -lhwloc
 
 all:
-	gcc -shared -o $(lib_target) $(source_files) $(libs)
+	gcc -g3 -shared -o $(lib_target) $(source_files) $(libs)
 	cp $(lib_target) ../.
 clean:
 	rm $(lib_target) 

@@ -6,13 +6,12 @@
 
 // main function to be exported to Go
  Processor get_proc_info() {
-	//init_topology();
-	Processor p;
+	init_topology();
+	Processor p = {0}; 
 	size_t data_size;
 	int ret;
-	//Processor* p = malloc(sizeof(Processor)); // needs to be freed in calling function
 	
-	
+	// get CPU packet info
 	for ( enum cpu_info_fields i = _NUMCORES; i <= _CAPS;i++) {
 		switch(i) {
 			case  _NUMCORES:
@@ -55,40 +54,35 @@
 		}
 	}
 	p.ID = get_proc_id();
-	
+
 // get info for all cores;
-for ( int i = 0 ; i < p.NumCores ;i++) {
-		p.Cores[i] = get_core_info(&p,i);
+	for ( int i = 0 ; i < p.NumCores ;i++) {
+		 get_core_info(&p.Cores[i],i,p.NumThreads/p.NumCores);
 	}	
 
-//destroy_topology();
+	destroy_topology();
 
-return p;
+	return p;
 }
 
-ProcessorCore get_core_info(Processor* proc,int id) {
-
-	ProcessorCore core;
-	core.NumThreads = proc->NumThreads/proc->NumCores;
-	core.ID = id;
-
+ void get_core_info(ProcessorCore* core,int id,int threads) {
+	init_topology();
+	
+	core->NumThreads = threads;
+	core->ID = id;
 	hwloc_obj_t pu;
-
 /*
 	Topology looks like this:
 	Core -> 2 L1d -> 1 PU/L1
 */
-
 	hwloc_obj_t core_obj = hwloc_get_obj_by_type(topology,HWLOC_OBJ_CORE,id);
-	core.LogicalProcessors = malloc(sizeof(int)*core.NumThreads);
-		for (int j = 0; j < core_obj->arity;j++) { // 2 PUs
-			pu = core_obj->children[j]->children[0];
-			
-			*(core.LogicalProcessors+(sizeof(int)*j)) = (int)pu->os_index;
-			//printf("pu: %d\n",*(core.LogicalProcessors+sizeof(int)*j));
-			
-		}
-	return core;
-
+	core->LogicalProcessors = malloc(sizeof(int)*core->NumThreads);
+	
+	for (int j = 0; j < core_obj->arity;j++) { // 2 PUs
+		pu = core_obj->children[j]->children[0];
+		*(core->LogicalProcessors+j) = (int)pu->os_index;		
+	}
+				
+		destroy_topology();
 }
 

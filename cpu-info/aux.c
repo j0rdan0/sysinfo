@@ -14,6 +14,7 @@ void cpuid(unsigned int *eax, unsigned int *ebx, unsigned int *ecx, unsigned int
     );
 }
 
+// this needs to be rewritten, processor id should be 0 or 1, since you mainly have only 1 CPU on Macs
 int get_proc_id() {
 	unsigned int eax,ebx,ecx,edx;
 	eax = 1;
@@ -30,47 +31,6 @@ void report_err(const char* info) {
 	perror(err);
 	exit(EXIT_FAILURE);
 }
-
-
-
-void test_hwloc() {
-	
-	int ret = hwloc_topology_init(&topology);
-	if ( ret == -1) {
-		perror("err: ");
-		exit(EXIT_FAILURE);
-	}
-	printf("topo initiated at: %p\n",&topology);
-	ret = hwloc_topology_load(topology);
-	if ( ret == -1) {
-		perror("err: ");
-		hwloc_topology_destroy(topology);
-		exit(EXIT_FAILURE);
-		
-	} 
-	printf("loaded topology\n");
-
-Processor p = get_proc_info();
-	
-	for ( int i = 0;i < p.NumCores;i++) {
-		printf("Core#%d\n",p.Cores[i].ID);
-		for(int j = 0; j < p.Cores[i].NumThreads;j++){
-			printf("PU#%d\n",*(p.Cores[i].LogicalProcessors+sizeof(int)*j));
-		}
-	}
-
-
-/*
-ProcessorCore core = get_core_info(&p,7);
-printf("core: %d\n",core.ID);
-
-for (int i = 0; i< core.NumThreads;i++) {
-	printf("pu: %d\n",*(core.LogicalProcessors+sizeof(int)*i));
-}
-	*/
-	
-}
-
 
 void init_topology() {
 	int ret = hwloc_topology_init(&topology);
