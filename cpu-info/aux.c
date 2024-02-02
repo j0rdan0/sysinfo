@@ -24,7 +24,6 @@ int get_proc_id() {
 	return proc_id;
 }
 
-// error handling requires more work
 void report_err(const char* info) {
 	char* err;
 	sprintf(err,"%s err: ",info);

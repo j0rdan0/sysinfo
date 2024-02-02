@@ -19,6 +19,9 @@ func main() {
 	proc := new(Processor)
 	proc.get_proc_info()
 	fmt.Println(proc.String())
+	for _, core := range proc.Cores {
+		fmt.Println(core.ID)
+	}
 	core := new(ProcessorCore)
 	index, err := strconv.Atoi(os.Args[1])
 	if err != nil {
@@ -27,7 +30,6 @@ func main() {
 	}
 	core.get_core_info(index)
 	fmt.Println(core.String())
-
 }
 
 func checkOS() {
@@ -53,6 +55,11 @@ func (proc *Processor) get_proc_info() {
 	proc.Model = int(p.Model)
 	proc.Vendor = C.GoString(p.Vendor)
 	proc.Capabilites = C.GoString(p.Capabilites)
+	core := new(ProcessorCore)
+	for i := 0; i < int(p.NumCores); i++ {
+		core.get_core_info(i)
+		proc.Cores = append(proc.Cores, core)
+	}
 
 }
 
@@ -67,6 +74,7 @@ func (core *ProcessorCore) get_core_info(i int) {
 	C.get_core_info((*C.ProcessorCore)(core_struct), C.int(i), C.int(threads)) // get core info
 
 	data := (*C.ProcessorCore)(unsafe.Pointer(core_struct))
+	defer C.free(unsafe.Pointer(data.LogicalProcessors))
 
 	// this is needed to change int* type to []C.int in Golang
 	logicalProcessors := make([]C.int, int(data.NumThreads))
@@ -81,11 +89,11 @@ func (core *ProcessorCore) get_core_info(i int) {
 	for i, val := range logicalProcessors {
 		core.LogicalProcessors[i] = int(val)
 	}
+
 }
 
 func (proc *Processor) String() string {
 
-	//features := strings.Join(proc.Capabilites, " ")
 	return fmt.Sprintf("Processor ID: %d\nModel: %d\nPhysical cores: %d\nHardware threads: %d\nVendor: %s\nFeatures: %s", proc.ID, proc.Model, proc.NumCores, proc.NumThreads, proc.Vendor, proc.Capabilites)
 }
 

@@ -23,7 +23,7 @@ typedef struct  {
     int Model; // machdep.cpu.model
     char* Vendor; // machdep.cpu.vendor
     char* Capabilites; // machdep.cpu.features
-    ProcessorCore Cores[8];
+   // ProcessorCore Cores[8];
 } Processor;
 
 #define INFO_LEN 5

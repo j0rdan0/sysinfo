@@ -7,7 +7,7 @@
 // main function to be exported to Go
  Processor get_proc_info() {
 	
-	Processor p = {0}; 
+	Processor p;
 	size_t data_size;
 	int ret;
 	
@@ -15,16 +15,19 @@
 	for ( enum cpu_info_fields i = _NUMCORES; i <= _CAPS;i++) {
 		switch(i) {
 			case  _NUMCORES:
+				data_size = sizeof(p.NumCores);
 				ret = sysctlbyname(NUMCORES,&p.NumCores,&data_size,NULL,0);
 				if (ret != 0) report_err(cpu_info[i]);
 				break;
 
 			case _NUMTHREADS:
+				data_size = sizeof(p.NumThreads);
 				ret = sysctlbyname(NUMTHREADS,&p.NumThreads,&data_size,NULL,0);
 				if (ret != 0) report_err(cpu_info[i]);
 				break; 
 
 			case _MODEL:
+				data_size = sizeof(p.Model);
 				ret = sysctlbyname(MODEL,&p.Model,&data_size,NULL,0);
 				if (ret != 0) report_err(cpu_info[i]);
 				break;
@@ -55,14 +58,14 @@
 	}
 	p.ID = get_proc_id();
 
-
+/*
 // get info for all cores;
 	for ( int i = 0 ; i < p.NumCores ;i++) {
 		 get_core_info(&p.Cores[i],i,p.NumThreads/p.NumCores);
 	}	
 
 	
-
+*/
 	return p;
 }
 
@@ -83,7 +86,7 @@
 		pu = core_obj->children[j]->children[0];
 		*(core->LogicalProcessors+j) = (int)pu->os_index;		
 	}
-				
+		
 		destroy_topology();
 }
 
