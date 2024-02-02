@@ -6,30 +6,20 @@ package main
 import "C"
 import (
 	"fmt"
-	"os"
 	"runtime"
 	"strconv"
+	"strings"
 	"unsafe"
 )
 
 func main() {
 
-	checkOS()
-
 	proc := new(Processor)
+	proc.Cores = make([]*ProcessorCore, 0)
 	proc.get_proc_info()
+
 	fmt.Println(proc.String())
-	for _, core := range proc.Cores {
-		fmt.Println(core.ID)
-	}
-	core := new(ProcessorCore)
-	index, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		fmt.Printf("usage: %s <index>\n", os.Args[0])
-		return
-	}
-	core.get_core_info(index)
-	fmt.Println(core.String())
+
 }
 
 func checkOS() {
@@ -55,8 +45,9 @@ func (proc *Processor) get_proc_info() {
 	proc.Model = int(p.Model)
 	proc.Vendor = C.GoString(p.Vendor)
 	proc.Capabilites = C.GoString(p.Capabilites)
-	core := new(ProcessorCore)
+
 	for i := 0; i < int(p.NumCores); i++ {
+		core := new(ProcessorCore)
 		core.get_core_info(i)
 		proc.Cores = append(proc.Cores, core)
 	}
@@ -92,18 +83,23 @@ func (core *ProcessorCore) get_core_info(i int) {
 
 }
 
+// stringify methods for CPU and Core types
 func (proc *Processor) String() string {
-
-	return fmt.Sprintf("Processor ID: %d\nModel: %d\nPhysical cores: %d\nHardware threads: %d\nVendor: %s\nFeatures: %s", proc.ID, proc.Model, proc.NumCores, proc.NumThreads, proc.Vendor, proc.Capabilites)
+	cores := make([]string, proc.NumCores)
+	for _, val := range proc.Cores {
+		cores = append(cores, val.String())
+	}
+	cores_str := strings.Join(cores, "")
+	return fmt.Sprintf("Processor ID: %d\nModel: %d\nPhysical cores: %d\nHardware threads: %d\nVendor: %s\nFeatures: %s\n\n%s\n", proc.ID, proc.Model, proc.NumCores, proc.NumThreads, proc.Vendor, proc.Capabilites, cores_str)
 }
 
 func (core *ProcessorCore) String() string {
-	var pus string = " "
+	var pus string = ""
 
 	for _, pu := range core.LogicalProcessors {
 		pus += strconv.Itoa(pu)
 		pus += " "
 
 	}
-	return fmt.Sprintf("Core ID: %d\nCore Num threads: %d \nPUs: [%s]\n", core.ID, core.NumThreads, pus)
+	return fmt.Sprintf("Core#%d\nPUs: [%s]\n", core.ID, pus)
 }

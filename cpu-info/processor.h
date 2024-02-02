@@ -34,7 +34,7 @@ typedef struct  {
 #define CAPS "machdep.cpu.features"
 #define VENDOR "machdep.cpu.vendor"
 
-void cpuid(unsigned int*,unsigned int*,unsigned int*,unsigned int*);
+void cpuid(uint32_t leaf, uint32_t subleaf, uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t* edx);
 int get_proc_id();
 Processor get_proc_info();
 void report_err(const char* info);

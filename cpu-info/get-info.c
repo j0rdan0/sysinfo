@@ -37,7 +37,7 @@
 				if (ret != 0) report_err(cpu_info[i]);
 
 				p.Vendor = (char*)malloc(data_size);
-				if (p.Vendor == NULL) report_err("malloc for vendor");
+				if (p.Vendor == NULL) report_err("malloc failed for vendor info");
 
 				ret = sysctlbyname(VENDOR,p.Vendor,&data_size,NULL,0);
 				if (ret != 0) report_err(cpu_info[i]);
@@ -48,7 +48,7 @@
 				if (ret != 0) report_err(cpu_info[i]);
 
 				p.Capabilites = (char*)malloc(data_size);
-				if (p.Capabilites == NULL) report_err("malloc for features");
+				if (p.Capabilites == NULL) report_err("malloc failed for features info");
 
 				ret = sysctlbyname(CAPS,p.Capabilites,&data_size,NULL,0);
 				if (ret != 0) report_err(cpu_info[i]);
@@ -76,8 +76,7 @@
 	core->ID = id;
 	hwloc_obj_t pu;
 /*
-	Topology looks like this:
-	Core -> 2 L1d -> 1 PU/L1
+	Topology looks like this: Core -> 2 L1d -> 1 PU/L1
 */
 	hwloc_obj_t core_obj = hwloc_get_obj_by_type(topology,HWLOC_OBJ_CORE,id);
 	core->LogicalProcessors = malloc(sizeof(int)*core->NumThreads);

@@ -6,22 +6,12 @@
 
 const char* cpu_info[] = {NUMCORES,NUMTHREADS,VENDOR,MODEL,CAPS};
 
-void cpuid(unsigned int *eax, unsigned int *ebx, unsigned int *ecx, unsigned int *edx) {
-    asm volatile (
-        "cpuid;"
-        : "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
-        : "a" (*eax), "c" (*ecx)
-    );
-}
-
-// this needs to be rewritten, processor id should be 0 or 1, since you mainly have only 1 CPU on Macs
 int get_proc_id() {
-	unsigned int eax,ebx,ecx,edx;
-	eax = 1;
-	ebx = ecx = edx = 0;
-	cpuid(&eax,&ebx,&ecx,&edx);
-	int proc_id = (ebx >> 24) & 0xFF; //  see https://www.felixcloutier.com/x86/cpuid
-	return proc_id;
+    init_topology();
+	 hwloc_obj_t proc;
+	 proc = hwloc_get_obj_by_type(topology, HWLOC_OBJ_PACKAGE, 0);
+	 return proc->os_index;
+	 destroy_topology();	
 }
 
 void report_err(const char* info) {
