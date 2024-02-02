@@ -6,7 +6,7 @@
 
 // main function to be exported to Go
  Processor get_proc_info() {
-	init_topology();
+	
 	Processor p = {0}; 
 	size_t data_size;
 	int ret;
@@ -55,12 +55,13 @@
 	}
 	p.ID = get_proc_id();
 
+
 // get info for all cores;
 	for ( int i = 0 ; i < p.NumCores ;i++) {
 		 get_core_info(&p.Cores[i],i,p.NumThreads/p.NumCores);
 	}	
 
-	destroy_topology();
+	
 
 	return p;
 }

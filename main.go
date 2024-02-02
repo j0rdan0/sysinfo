@@ -16,8 +16,9 @@ func main() {
 
 	checkOS()
 
-	//proc := new(Processor)
-	//proc.get_proc_info()
+	proc := new(Processor)
+	proc.get_proc_info()
+	fmt.Println(proc.String())
 	core := new(ProcessorCore)
 	index, err := strconv.Atoi(os.Args[1])
 	if err != nil {
@@ -85,7 +86,7 @@ func (core *ProcessorCore) get_core_info(i int) {
 func (proc *Processor) String() string {
 
 	//features := strings.Join(proc.Capabilites, " ")
-	return fmt.Sprintf("Processor ID: %d Model: %d Physical cores: %d Hardware threads: %d Vendor: %s Features: %s", proc.ID, proc.Model, proc.NumCores, proc.NumThreads, proc.Vendor, proc.Capabilites)
+	return fmt.Sprintf("Processor ID: %d\nModel: %d\nPhysical cores: %d\nHardware threads: %d\nVendor: %s\nFeatures: %s", proc.ID, proc.Model, proc.NumCores, proc.NumThreads, proc.Vendor, proc.Capabilites)
 }
 
 func (core *ProcessorCore) String() string {
