@@ -1,8 +1,10 @@
 lib = libprocessor.so
 target_dir = cmd
 target = sysinfo
+lib_makefile = pkg/cpu/cpu-info/Makefile
+
 all:
-	make -f cpu-info/Makefile # build libprocessor first
+	make -f $(lib_makefile) # build libprocessor first
 	go build -o $(target_dir)/$(target) . 
 	cp $(lib) $(target_dir)
 clean:

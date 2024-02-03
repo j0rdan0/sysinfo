@@ -24,7 +24,7 @@ func (proc *Processor) Get_proc_info() {
 
 	for i := 0; i < int(p.NumCores); i++ {
 		core := new(ProcessorCore)
-		core.get_core_info(i, int(proc.NumThreads)/int(proc.NumCores))
+		core.Get_core_info(i, int(proc.NumThreads)/int(proc.NumCores))
 		proc.Cores = append(proc.Cores, core)
 	}
 
